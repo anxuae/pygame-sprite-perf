@@ -151,14 +151,12 @@ class BaseSprite(pygame.sprite.DirtySprite):
             return tuple(min(int(c * abs(factor)), 255) for c in self.color)
         return pygame.transform.average_color(self.image)
 
-    def set_pressed(self, state, toggle_timeout=None):
+    def set_pressed(self, state):
         """Set the pressed state (1 for pressed 0 for released)
         and redraws it.
 
         :param state: new sprite state.
         :type state: bool.
-        :param toggle_timeout: timeout after which state is toggled.
-        :type toggle_timeout: int.
         """
         if self.pressed != int(state):
             self.pressed = int(state)
@@ -423,14 +421,12 @@ class Game:
         self.worker = AsyncTask(partial(get_preview_image, self.camera), event=CAM_EVENT, loop=True)
 
         self.sprites = pygame.sprite.LayeredDirty()
-        self.background = ImageSprite(None, (0, 0, 0), size=self.display_size, outlines=False, layer=0)
         image = ImageSprite(None, layer=3)
         image.set_rect((self.display_size[0] - self.preview_size[0]) // 2,
                        (self.display_size[1] - self.preview_size[1]) // 2,
                        self.preview_size[0], self.preview_size[1])
         image.hide()
         self.sprites.add(image)
-        self.sprites.clear(None, self.background.image)
 
     def update(self, screen, events):
         dirty_rects = []
@@ -449,7 +445,7 @@ class Game:
                 logging.info("Wait for %ss", self.capture_display_time)
                 time.sleep(self.capture_display_time)
 
-            if (event.type == CAM_EVENT):
+            if event.type == CAM_EVENT:
                 self.sprites.get_sprite(0).set_skin(event.result)
                 self.sprites.get_sprite(0).show()
 

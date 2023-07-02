@@ -31,7 +31,8 @@ class Game:
 
         array = self.camera.capture_array()
         surface = pygame.image.frombuffer(array.data, self.preview_size, 'RGB')
-        screen.blit(surface, (0, 0))
+        rect = surface.get_rect(center=screen.get_rect().center)
+        screen.blit(surface, rect)
 
         # Update full screen
         pygame.display.flip()

@@ -195,10 +195,10 @@ class Game:
                 logging.info("Wait for %ss", self.capture_display_time)
                 time.sleep(self.capture_display_time)
 
-            if (event.type == CAM_EVENT):
+            if event.type == CAM_EVENT:
                 surface = image2surface(event.result, self.preview_size)
                 rect = surface.get_rect(center=screen.get_rect().center)
-                screen.blit(surface, rect.topleft)
+                screen.blit(surface, rect)
                 dirty_rects.append(rect)
 
         pygame.display.update(dirty_rects)

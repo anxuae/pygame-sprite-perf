@@ -417,6 +417,7 @@ class Game:
         self.camera, self.capture_config = create_camera(self.preview_size)
         self.camera.start()
         self.capture_display_time = 3
+        self.capture_counter = 0
         self.pool = AsyncTasksPool()
         self.worker = AsyncTask(partial(get_preview_image, self.camera), event=CAM_EVENT, loop=True)
 
@@ -427,6 +428,10 @@ class Game:
                        self.preview_size[0], self.preview_size[1])
         image.hide()
         self.sprites.add(image)
+
+        self.background = ImageSprite(None, (0, 0, 0), size=self.display_size, outlines=False, layer=0)
+        self.background.set_rect(0, 0, self.display_size[0], self.display_size[1])
+        #self.sprites.clear(None, self.background.image)
 
     def update(self, screen, events):
         dirty_rects = []
@@ -448,6 +453,7 @@ class Game:
             if event.type == CAM_EVENT:
                 self.sprites.get_sprite(0).set_skin(event.result)
                 self.sprites.get_sprite(0).show()
+                self.capture_counter += 1
 
         self.sprites.update(events)
         dirty_rects = self.sprites.draw(screen)

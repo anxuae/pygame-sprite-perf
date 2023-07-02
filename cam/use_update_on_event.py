@@ -175,6 +175,7 @@ class Game:
         self.camera, self.capture_config = create_camera(self.preview_size)
         self.camera.start()
         self.capture_display_time = 3
+        self.capture_counter = 0
         self.pool = AsyncTasksPool()
         self.worker = AsyncTask(partial(get_preview_image, self.camera), event=CAM_EVENT, loop=True)
 
@@ -200,6 +201,7 @@ class Game:
                 rect = surface.get_rect(center=screen.get_rect().center)
                 screen.blit(surface, rect)
                 dirty_rects.append(rect)
+                self.capture_counter += 1
 
         pygame.display.update(dirty_rects)
 

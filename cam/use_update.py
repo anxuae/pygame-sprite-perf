@@ -13,6 +13,7 @@ class Game:
         self.camera, self.capture_config = create_camera(self.preview_size)
         self.camera.start()
         self.capture_display_time = 3
+        self.capture_counter = 0
 
     def update(self, screen, events):
         for event in events:
@@ -33,6 +34,7 @@ class Game:
         surface = pygame.image.frombuffer(array.data, self.preview_size, 'RGB')
         rect = surface.get_rect(center=screen.get_rect().center)
         screen.blit(surface, rect.topleft)
+        self.capture_counter += 1
 
         # Update only the surface where preview is displayed
         pygame.display.update([rect])

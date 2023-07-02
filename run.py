@@ -1,4 +1,5 @@
 
+import time
 import logging
 import pygame
 import cProfile
@@ -13,18 +14,21 @@ PREVIEW_SIZE = (240, 400)
 
 def pygame_loop(game, profile=False, loop_count=None):
     counter = 0
-    screen = pygame.display.set_mode(DISPLAY_SIZE)
+    start_time = time.time()
     clock = pygame.time.Clock()
+    screen = pygame.display.set_mode(DISPLAY_SIZE)
 
     if profile:
         profiler = cProfile.Profile()
 
     while True:
         events = pygame.event.get()
+
         for event in events:
             # Press "ESC" key -> exit
             if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                print("Average FPS: ", clock.get_fps())
+                logging.info("Game loop speed (FPS): %s", clock.get_fps())
+                logging.info("Capture per seconds (CPS): %s", game.capture_counter / (time.time() - start_time))
                 return
 
         if profile:
@@ -37,12 +41,13 @@ def pygame_loop(game, profile=False, loop_count=None):
             p = pstats.Stats(f"prof{counter}.dump")
             p.sort_stats(SortKey.TIME).print_stats(3)
 
+        if loop_count and counter >= loop_count:
+            logging.info("Game loop speed (FPS): %s", clock.get_fps())
+            logging.info("Capture per seconds (CPS): %s", game.capture_counter / (time.time() - start_time))
+            break
+
         clock.tick(100)  # Ensure not exceed 100 FPS
         counter += 1
-
-        if loop_count and counter >= loop_count:
-            print("Average FPS: ", clock.get_fps())
-            break
 
 
 if __name__ == '__main__':

@@ -21,6 +21,9 @@ def pygame_loop(game, profile=False, loop_count=None):
     if profile:
         profiler = cProfile.Profile()
 
+    if profile:
+        profiler.enable()
+
     while True:
         events = pygame.event.get()
 
@@ -31,15 +34,7 @@ def pygame_loop(game, profile=False, loop_count=None):
                 logging.info("Capture per seconds (CPS): %s", game.capture_counter / (time.time() - start_time))
                 return
 
-        if profile:
-            profiler.enable()
-
         game.update(screen, events)
-
-        if profile:
-            profiler.dump_stats(f"prof{counter}.dump")
-            p = pstats.Stats(f"prof{counter}.dump")
-            p.sort_stats(SortKey.TIME).print_stats(3)
 
         if loop_count and counter >= loop_count:
             logging.info("Game loop speed (FPS): %s", clock.get_fps())
@@ -48,6 +43,11 @@ def pygame_loop(game, profile=False, loop_count=None):
 
         clock.tick(100)  # Ensure not exceed 100 FPS
         counter += 1
+
+    if profile:
+        profiler.dump_stats(f"prof{counter}.dump")
+        p = pstats.Stats(f"prof{counter}.dump")
+        p.sort_stats(SortKey.TIME).print_stats(6)
 
 
 if __name__ == '__main__':

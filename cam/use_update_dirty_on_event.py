@@ -432,6 +432,8 @@ class Game:
         self.background = ImageSprite(None, (0, 0, 0), size=self.display_size, outlines=False, layer=0)
         self.background.set_rect(0, 0, self.display_size[0], self.display_size[1])
         #self.sprites.clear(None, self.background.image)
+        self.sprites.set_timing_threshold(1000)
+        self.sprites.add(self.background)
 
     def update(self, screen, events):
         dirty_rects = []
